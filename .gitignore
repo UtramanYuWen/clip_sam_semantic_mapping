@@ -48,7 +48,15 @@ models/*.pt
 *.npy
 
 # Results and outputs (local testing)
-results/
+# Track directory structure but ignore generated files
+results/**
+!results/.gitkeep
+!results/semantic_maps/
+!results/semantic_maps/.gitkeep
+!results/waypoints/
+!results/waypoints/.gitkeep
+!results/logs/
+!results/logs/.gitkeep
 temp/
 tmp/
 *.log
