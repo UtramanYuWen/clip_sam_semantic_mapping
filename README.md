@@ -385,6 +385,7 @@ MIT License
 - CLIP: [OpenAI](https://github.com/openai/CLIP)
 - SAM: [Meta Research](https://github.com/facebookresearch/segment-anything)
 - ROS: [Open Source Robotics Foundation](https://www.ros.org/)
+- wpr_simulation: [zhangwanjie](https://github.com/6-robot/wpr_simulation.git)
 
 ---
 
