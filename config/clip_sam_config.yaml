@@ -1,0 +1,305 @@
+# CLIP+SAM语义建图配置- 专注于障碍物+家具+房间可靠划分
+# 匹配/home/robot/catkin_ws/src/slam_pkg/launch/gmapping.launch
+
+# ✨ 推理配置
+inference:
+  structure_detection:
+    enable: false  # ✅ 禁用 Structure 检测（准确率低，SLAM 已有）
+  furniture_detection:
+    enable: true
+
+# CLIP模型配置
+clip:
+  model_name: "ViT-B/32"
+  device: "auto"
+  confidence_threshold: 0.25  # 降低阈值，提高敏感度
+
+# SAM模型配置  
+sam:
+  model_type: "vit_b"
+  checkpoint_path: "./models/sam_vit_b_01ec64.pth"
+  device: "auto"
+  points_per_side: 16  # 增加密度，更好地分割物体
+  pred_iou_thresh: 0.65
+  stability_score_thresh: 0.75  # 稳定性阈值
+  crop_n_layers: 1  # 新增：多尺度裁剪层数
+  crop_n_points_downscale_factor: 2  # 新增：裁剪点下采样因子
+
+# 🏠房间类型- 保持您的原有配置
+# room_types:
+#   chinese: ["客厅", "卧室", "厨房", "卫生间", "阳台", "书房", "餐厅", "玄关"]
+#   english: ["living room", "bedroom", "kitchen", "bathroom", "balcony", "study", "dining room", "entrance"]
+#   codes:
+#     "客厅": 10
+#     "卧室": 20  
+#     "厨房": 30
+#     "卫生间": 40
+#     "阳台": 50
+#     "书房": 60
+#     "餐厅": 70
+#     "玄关": 80
+#     "未知": 5
+#   colors:
+#     "客厅": [0, 255, 0]
+#     "卧室": [255, 0, 0]
+#     "厨房": [0, 0, 255]
+#     "卫生间": [255, 255, 0]
+#     "阳台": [255, 0, 255]
+#     "书房": [0, 255, 255]
+#     "餐厅": [255, 128, 0]
+#     "玄关": [128, 255, 0]
+#     "未知": [128, 128, 128]
+room_types:
+  chinese: ["客厅", "卧室", "书房", "餐厅"]
+  english: ["living room", "bedroom", "study", "dining room"]
+  codes:
+    "客厅": 10
+    "卧室": 20  
+    "书房": 60
+    "餐厅": 70
+    "未知": 5
+  colors:
+    "客厅": [0, 255, 0]
+    "卧室": [255, 0, 0]
+    "书房": [0, 255, 255]
+    "餐厅": [255, 128, 0]
+    "未知": [128, 128, 128]
+
+# 🪑 家具物品语义分类- 专注于家居环境
+# 🪑 家具物品语义分类 - 修正编码范围
+# furniture_objects:
+#   # 大型家具 (50-59)
+#   large_furniture:
+#     chinese: ["沙发", "床", "衣柜", "书柜", "餐桌", "茶几", "电视柜"]
+#     english: ["sofa", "bed", "wardrobe", "bookshelf", "dining table", "coffee table", "tv stand"]
+#     codes: {"沙发": 50, "床": 51, "衣柜": 52, "书柜": 53, "餐桌": 54, "茶几": 55, "电视柜": 56}
+#     colors: {"沙发": [139, 69, 19], "床": [160, 82, 45], "衣柜": [205, 133, 63], "书柜": [222, 184, 135], 
+#              "餐桌": [244, 164, 96], "茶几": [210, 180, 140], "电视柜": [188, 143, 143]}
+  
+#   # 中型家具 (60-69)
+#   medium_furniture:
+#     chinese: ["椅子", "凳子", "桌子", "办公桌", "梳妆台", "鞋柜"]
+#     english: ["chair", "stool", "table", "desk", "dressing table", "shoe cabinet"]
+#     codes: {"椅子": 60, "凳子": 61, "桌子": 62, "办公桌": 63, "梳妆台": 64, "鞋柜": 65}
+#     colors: {"椅子": [255, 140, 0], "凳子": [255, 165, 0], "桌子": [255, 215, 0], 
+#              "办公桌": [240, 230, 140], "梳妆台": [255, 218, 185], "鞋柜": [245, 222, 179]}
+  
+#   # 家电设备 (70-79)
+#   appliances:
+#     chinese: ["电视", "冰箱", "洗衣机", "空调", "微波炉", "热水器"]
+#     english: ["television", "refrigerator", "washing machine", "air conditioner", "microwave", "water heater"]
+#     codes: {"电视": 70, "冰箱": 71, "洗衣机": 72, "空调": 73, "微波炉": 74, "热水器": 75}
+#     colors: {"电视": [70, 130, 180], "冰箱": [100, 149, 237], "洗衣机": [123, 104, 238], 
+#              "空调": [147, 112, 219], "微波炉": [138, 43, 226], "热水器": [106, 90, 205]}
+furniture_objects:
+  # 大型家具 (50-59)
+  large_furniture:
+    chinese: ["沙发", "床", "书柜", "餐桌", "茶几", "电视柜"]
+    english: ["sofa", "bed", "bookshelf", "dining table", "coffee table", "tv stand"]
+    codes: {"沙发": 50, "床": 51, "书柜": 53, "餐桌": 54, "茶几": 55, "电视柜": 56}
+    colors: {"沙发": [139, 69, 19], "床": [160, 82, 45], "书柜": [222, 184, 135], 
+             "餐桌": [244, 164, 96], "茶几": [210, 180, 140], "电视柜": [188, 143, 143]}
+  
+  # 中型家具 (60-69)
+  medium_furniture:
+    chinese: ["椅子", "桌子", "办公桌", "鞋柜"]
+    english: ["chair", "table", "desk", "shoe cabinet"]
+    codes: {"椅子": 60, "桌子": 62, "鞋柜": 65}
+    colors: {"椅子": [255, 140, 0], "桌子": [255, 215, 0], 
+             "鞋柜": [245, 222, 179]}
+  
+  # # 家电设备 (70-79)
+  # appliances:
+  #   chinese: ["电视", "冰箱", "洗衣机", "空调", "微波炉", "热水器"]
+  #   english: ["television", "refrigerator", "washing machine", "air conditioner", "microwave", "water heater"]
+  #   codes: {"电视": 70, "冰箱": 71, "洗衣机": 72, "空调": 73, "微波炉": 74, "热水器": 75}
+  #   colors: {"电视": [70, 130, 180], "冰箱": [100, 149, 237], "洗衣机": [123, 104, 238], 
+  #            "空调": [147, 112, 219], "微波炉": [138, 43, 226], "热水器": [106, 90, 205]}
+
+# 🧱 障碍物和结构元素 - 修正编码范围
+structural_elements:
+  # 固定结构 (80-89)
+  fixed_structures:
+    chinese: ["墙壁", "柱子", "台阶", "楼梯", "栏杆", "窗户", "门"]
+    english: ["wall", "pillar", "step", "stairs", "railing", "window", "door"]
+    codes: {"墙壁": 80, "柱子": 81, "台阶": 82, "楼梯": 83, "栏杆": 84, "窗户": 85, "门": 86}
+    colors: {"墙壁": [105, 105, 105], "柱子": [119, 136, 153], "台阶": [128, 128, 128], 
+             "楼梯": [169, 169, 169], "栏杆": [192, 192, 192], "窗户": [211, 211, 211], "门": [220, 220, 220]}
+  
+  # 地面元素 (90-99)
+  floor_elements:
+    chinese: ["地板", "地毯", "瓷砖", "门槛", "地垫"]
+    english: ["floor", "carpet", "tile", "threshold", "mat"]
+    codes: {"地板": 90, "地毯": 91, "瓷砖": 92, "门槛": 93, "地垫": 94}
+    colors: {"地板": [205, 192, 176], "地毯": [188, 143, 143], "瓷砖": [245, 245, 220], 
+             "门槛": [139, 134, 130], "地垫": [160, 160, 160]}
+
+
+
+# 🤖WPR仿真环境ROS话题配置
+ros_topics:
+  input_image: "/kinect2/qhd/image_color_rect"
+  input_laser: "/scan"
+  input_map: "/map"
+  # 新增深度信息(如果可用)
+  input_depth: "/kinect2/qhd/image_depth_rect"
+  
+  output_semantic_label: "/semantic_label"
+  output_semantic_map: "/semantic_occupancy_grid"
+  output_semantic_image: "/semantic_map_image"
+  output_inference_info: "/semantic_inference_info"
+  # 新增分层语义输出
+  output_furniture_map: "/furniture_semantic_map"
+  output_structure_map: "/structure_semantic_map"
+
+# 🧠推理配置- 多层次语义分析
+inference:
+  max_concurrent: 2  # 支持并发处理
+  queue_size: 8
+  image_change_threshold: 0.15  # 降低变化阈值
+  confidence_threshold: 0.5
+  force_inference_interval: 1.5
+  inference_interval: 0.08  # 提高推理频率
+  
+  # 🪑 家具检测参数
+  furniture_detection:
+    enable: true
+    confidence_threshold: 0.5  # 家具检测阈值
+    sam_enhancement: true  # 启用SAM增强分割
+    size_filter_min: 200  # 最小家具区域(像素)
+    size_filter_max: 50000  # 最大家具区域(像素)
+  
+  # 🧱 结构检测参数  
+  structure_detection:
+    enable: true
+    confidence_threshold: 0.5  # 结构检测阈值
+    edge_enhancement: true  # 边缘增强
+    morphology_filter: true  # 形态学过滤
+
+# 🎯WSL+Stage仿真配置
+simulation_config:
+  environment: "wpr_stage_robocup"
+  display_server: "X11"
+  gpu_mode: "cpu_only"
+  opencv_backend: "cpu"
+
+# 📊地图保存 - 适配您的项目结构
+map_save:
+  auto_save: true
+  directory: "/home/robot/catkin_ws/src/clip_sam_semantic_mapping/results/semantic_maps"
+  filename_format: "hierarchical_clip_sam_{timestamp}_{rooms}.png"
+  save_room_map: true
+  save_furniture_map: true
+  save_structure_map: true
+  save_combined_map: true
+  
+# 统计保存
+statistics:
+  save_stats: true
+  stats_directory: "/home/robot/catkin_ws/src/clip_sam_semantic_mapping/results/analysis"
+  log_directory: "/home/robot/catkin_ws/src/clip_sam_semantic_mapping/results/logs"
+
+# 🔧激光雷达投射参数- 优化物体检测
+laser_projection:
+  range_min: 0.1
+  range_max: 5.0
+  angle_range: 75.0  # 扩大角度范围
+  annotation_radius: 4  # 增加标注半径
+  # 分层标注参数
+  room_annotation_radius: 5  # 房间标注半径
+  furniture_annotation_radius: 3  # 家具标注半径
+  structure_annotation_radius: 2  # 结构标注半径
+
+# 🎨显示配置
+visualization:
+  window_name: "Hierarchical CLIP+SAM Semantic Mapping - WPR Stage"
+  font_scale: 0.7
+  font_thickness: 2
+  # 分层显示控制
+  show_room_overlay: true
+  show_furniture_overlay: true  
+  show_structure_overlay: true
+  overlay_alpha: 0.6  # 叠加透明度
+  
+# 🔧 CLIP提示词优化
+clip_prompts:
+  # 房间识别提示词增强
+  room_enhancement:
+    enable: true
+    context_templates:
+      - "interior of a {room_type}"
+      - "inside a {room_type}"
+      - "{room_type} with furniture"
+      - "residential {room_type}"
+  
+  # 家具识别提示词
+  furniture_enhancement:
+    enable: true
+    context_templates:
+      - "furniture {object}"
+      - "{object} in home"
+      - "household {object}"
+      - "residential {object}"
+      - "{object} piece of furniture"
+  
+  # 结构识别提示词
+  structure_enhancement:
+    enable: true
+    context_templates:
+      - "architectural {element}"
+      - "building {element}"  
+      - "interior {element}"
+      - "structural {element}"
+
+  # 📌 每个房间的专属提示词（可覆盖上面的通用room_enhancement模板）
+  # 说明：键使用中文房间名，值为该房间的多条提示词；默认使用与上面类似的模板，但针对房间做了轻量化定制。
+  per_room_prompts:
+    "客厅":
+      - "interior of a living room"
+      - "cozy living room with sofa and television"
+      - "Two pale yellow sofas placed facing each other with a coffee table between them"
+    # "客厅":
+    #   - "interior of a living room"
+    #   - "cozy living room with sofa and television"
+    #   - "living room with seating area and coffee table"
+    #   - "residential living room with decorations"
+    # "卧室":
+    #   - "interior of a bedroom"
+    #   - "bedroom with a bed and wardrobe"
+    #   - "sleeping room with bedside table and lamp"
+    #   - "residential bedroom with linens and pillows"
+    "卧室":
+      - "interior of a bedroom with bed as main furniture, not a living room, not a study"
+      - "A bedroom with one bed and bedroom furniture"
+      - "residential bedroom with bed, linens, pillows and nightstand"
+      - "private bedroom interior with sleeping area"
+    "书房":
+      - "interior of a home office study room, not a dininng room"
+      - "study room with desk, chair, and bookshelves"
+      - "Two bookshelves with a desk and office chair in a study room"
+      - "home office interior with books, desk, and reading area"
+    "餐厅":
+      - "interior of a dining room, not a bedroom, not a study"
+      - "dining room with many tables and chairs"
+      - "residential dining area with table setting"
+
+# 🎯 SAM分割优化
+sam_optimization:
+  # 多尺度分割
+  multi_scale:
+    enable: true
+    scales: [0.8, 1.0, 1.2]  # 多尺度比例
+    
+  # 区域后处理
+  post_processing:
+    enable: true
+    min_area_threshold: 100  # 最小区域阈值
+    max_area_threshold: 100000  # 最大区域阈值
+    hole_filling: true  # 孔洞填充
+    edge_smoothing: true  # 边缘平滑
+    
+  # 遮罩质量过滤
+  mask_quality:
+    iou_threshold: 0.7  # IoU阈值
+    stability_threshold: 0.8  # 稳定性阈值
+    confidence_threshold: 0.75  # 置信度阈值

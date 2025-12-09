@@ -1,0 +1,93 @@
+<launch>
+  <!-- 【推荐】完整的多层次CLIP+SAM语义建图系统启动文件
+       
+       ═══════════════════════════════════════════════════════════════
+       启动方式 1: 一体化启动 (推荐) 
+       ═══════════════════════════════════════════════════════════════
+       
+       启动命令:
+         roslaunch clip_sam_semantic_mapping hierarchical_clip_sam_mapping.launch
+       
+       包含组件:
+         ✓ Gazebo仿真 (WPR Stage RoboCup环境)
+         ✓ 键盘控制 (wasdqe 控制机器人移动)
+         ✓ gmapping SLAM建图 (实时构建栅格地图)
+         ✓ CLIP+SAM多层次语义建图 (房间/家具/结构分割)
+         ✓ RViz可视化 (地图与语义标签可视化)
+       
+       说明: 这是最推荐的启动方式，所有组件在一个进程中
+  -->
+  
+  <arg name="config_path" default="$(find clip_sam_semantic_mapping)/config/clip_sam_config.yaml"/>
+  <arg name="world_file" default="robocup"/>
+  <arg name="start_rviz" default="true"/>
+  <arg name="keyboard_control" default="true"/>
+  
+  <!-- ========== 1. WPR仿真环境 ========== -->
+  <!-- 注: 使用自定义的wpb_stage_robocup_custom.launch，包含键盘控制等改进
+       原始文件在 wpr_simulation/launch/wpb_stage_robocup.launch -->
+  <group>
+    <include file="$(find clip_sam_semantic_mapping)/launch/wpb_stage_robocup_custom.launch" />
+  </group>
+  
+  <!-- ========== 2. 传统SLAM建图 ========== -->
+  <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
+    <!-- 基本参数 -->
+    <param name="map_update_interval" value="0.5"/>
+    <param name="linearUpdate" value="0.1" />
+    <param name="angularUpdate" value="0.05" />
+    <param name="temporalUpdate" value="0.1" />
+    
+    <!-- 地图参数 -->
+    <param name="delta" value="0.05" />
+    <param name="xmin" value="-10.0" />
+    <param name="ymin" value="-10.0" />
+    <param name="xmax" value="10.0" />
+    <param name="ymax" value="10.0" />
+    
+    <!-- 激光参数 -->
+    <param name="maxUrange" value="5.0" />
+    <param name="maxRange" value="8.0" />
+    
+    <!-- 算法参数 -->
+    <param name="particles" value="80" />
+    <param name="sigma" value="0.05" />
+    <param name="kernelSize" value="1" />
+    <param name="iterations" value="5" />
+    <param name="minimumScore" value="200" />
+    
+    <!-- 运动模型参数 -->
+    <param name="srr" value="0.01" />
+    <param name="srt" value="0.02" />
+    <param name="str" value="0.01" />
+    <param name="stt" value="0.02" />
+    
+    <!-- 重采样参数 -->
+    <param name="resampleThreshold" value="0.5" />
+  </node>
+  
+  <!-- ========== 3. 多层次语义建图 ========== -->
+  <node name="hierarchical_clip_sam_mapper" 
+        pkg="clip_sam_semantic_mapping" 
+        type="clip_sam_semantic_mapper.py" 
+        output="screen"
+        respawn="false">
+    
+    <param name="config_path" value="$(arg config_path)"/>
+    
+    <!-- 话题重映射 -->
+    <remap from="image_raw" to="/kinect2/qhd/image_color_rect"/>
+    <remap from="scan" to="/scan"/>
+    <remap from="map" to="/map"/>
+    
+  </node>
+  
+  <!-- ========== 4. RViz可视化 ========== -->
+  <node if="$(arg start_rviz)"
+        name="rviz_semantic_mapping" 
+        pkg="rviz" 
+        type="rviz" 
+        args="-d $(find clip_sam_semantic_mapping)/rviz/hierarchical_semantic_mapping.rviz"
+        output="screen"/>
+        
+</launch>

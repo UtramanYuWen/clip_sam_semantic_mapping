@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>clip_sam_semantic_mapping</name>
+  <version>1.0.0</version>
+  <description>Multi-level CLIP+SAM semantic mapping system for indoor environments</description>
+
+  <maintainer email="your_email@example.com">Your Name</maintainer>
+  <license>MIT</license>
+  
+  <url type="website">https://github.com/yourusername/clip_sam_semantic_mapping</url>
+  <url type="bugtracker">https://github.com/yourusername/clip_sam_semantic_mapping/issues</url>
+  <url type="repository">https://github.com/yourusername/clip_sam_semantic_mapping</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- ROS依赖 -->
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>tf</depend>
+  <depend>rviz</depend>
+  
+  <!-- SLAM依赖 -->
+  <depend>gmapping</depend>
+  
+  <!-- 仿真环境依赖 (必需) - 提供Gazebo仿真环境和家具模型 -->
+  <depend>wpr_simulation</depend>
+  
+  <!-- Python依赖在requirements.txt中 -->
+  <exec_depend>python3-opencv</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-scipy</exec_depend>
+  <exec_depend>python3-PIL</exec_depend>
+
+  <export>
+    <!-- 指定这是一个Python包 -->
+  </export>
+</package>

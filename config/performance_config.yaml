@@ -1,0 +1,109 @@
+# CLIP+SAM语义建图系统 - 性能优化配置
+# Performance Optimization Configuration
+
+performance_optimization:
+  # 显示优化
+  display:
+    # 最大显示分辨率（分辨率越低，显卡压力越小）
+    max_display_width: 1280
+    max_display_height: 720
+    
+    # 目标显示帧率（Hz）
+    target_display_fps: 30
+    
+    # 显示缓冲区大小
+    display_buffer_size: 2
+    
+    # 仅显示关键文本，不绘制复杂图形
+    simplified_display: true
+
+  # 推理优化
+  inference:
+    # 基础推理间隔（秒）
+    base_interval: 0.08
+    
+    # 最小推理间隔（秒）- 高性能CPU可设置更低
+    min_interval: 0.05
+    
+    # 最大推理间隔（秒）- 当CPU过载时增加
+    max_interval: 0.2
+    
+    # 仅在房间识别成功时进行家具/结构分析
+    conditional_furniture_analysis: true
+    
+    # 推理日志打印间隔（每N次推理打印一次）
+    log_interval: 5
+
+  # 地图优化
+  map:
+    # 地图发布间隔（秒）
+    publish_interval: 0.5
+    
+    # 地图压缩比例（0.5 = 50%压缩）
+    compression_ratio: 0.5
+    
+    # 只发布有显著变化的地图（避免重复发布）
+    publish_only_on_change: true
+    
+    # 地图栅格更新频率（Hz）
+    grid_update_frequency: 2.0
+
+  # 图像处理优化
+  image_processing:
+    # 推理图像目标大小
+    inference_image_size: 512
+    
+    # 使用高效的插值算法
+    interpolation_method: "INTER_AREA"
+    
+    # 并行处理线程数
+    num_threads: 2
+
+  # 内存优化
+  memory:
+    # 临时文件自动清理（秒）
+    temp_file_cleanup_interval: 300
+    
+    # 保留的最大帧缓冲数
+    max_frame_buffer_size: 3
+    
+    # 检测历史记录最大长度
+    detection_history_max_length: 50
+
+  # CPU/GPU负载监控
+  monitoring:
+    # 启用性能监控
+    enabled: true
+    
+    # 监控间隔（秒）
+    interval: 5.0
+    
+    # CPU负载阈值（>0.8时降低推理频率）
+    cpu_threshold_high: 0.8
+    
+    # CPU负载阈值（<0.5时提高推理频率）
+    cpu_threshold_low: 0.5
+
+# 推荐配置组合
+profiles:
+  # 高性能模式（GPU充足，CPU强大）
+  high_performance:
+    display.target_display_fps: 60
+    inference.base_interval: 0.05
+    inference.min_interval: 0.03
+    map.publish_interval: 0.3
+
+  # 平衡模式（推荐）
+  balanced:
+    display.target_display_fps: 30
+    inference.base_interval: 0.08
+    inference.min_interval: 0.05
+    map.publish_interval: 0.5
+
+  # 省电模式（计算资源有限）
+  power_saving:
+    display.target_display_fps: 15
+    inference.base_interval: 0.15
+    inference.min_interval: 0.1
+    map.publish_interval: 1.0
+    inference.conditional_furniture_analysis: true
