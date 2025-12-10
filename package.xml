@@ -4,12 +4,12 @@
   <version>1.0.0</version>
   <description>Multi-level CLIP+SAM semantic mapping system for indoor environments</description>
 
-  <maintainer email="your_email@example.com">Your Name</maintainer>
+  <maintainer email="18710185751@163.com">Ning WenBo</maintainer>
   <license>MIT</license>
   
-  <url type="website">https://github.com/yourusername/clip_sam_semantic_mapping</url>
-  <url type="bugtracker">https://github.com/yourusername/clip_sam_semantic_mapping/issues</url>
-  <url type="repository">https://github.com/yourusername/clip_sam_semantic_mapping</url>
+  <url type="website">https://github.com/UtramanYuWen/clip_sam_semantic_mapping</url>
+  <url type="bugtracker">https://github.com/UtramanYuWen/clip_sam_semantic_mapping/issues</url>
+  <url type="repository">https://github.com/UtramanYuWen/clip_sam_semantic_mapping</url>
 
   <buildtool_depend>catkin</buildtool_depend>
 

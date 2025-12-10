@@ -60,6 +60,7 @@ sudo apt-get install -y -qq \
     ros-${ROS_DISTRO}-std-msgs \
     ros-${ROS_DISTRO}-sensor-msgs \
     ros-${ROS_DISTRO}-message-generation \
+    ros-${ROS_DISTRO}-gmapping \
     build-essential \
     cmake \
     git \

@@ -4,14 +4,15 @@ torchvision>=0.14.0
 opencv-python>=4.5.0
 pillow>=8.0.0
 numpy>=1.21.0
-scipy>=1.7.0
+scipy>=1.8.0
 matplotlib>=3.5.0
 pyyaml>=5.4.0
+scikit-image>=0.18.0
 
 # CLIP和SAM
 git+https://github.com/openai/CLIP.git
 git+https://github.com/facebookresearch/segment-anything.git
 
-# ROS依赖 (如果在ROS环境中)
+# ROS依赖 (通常通过apt-get安装，这里仅作参考)
 # rospkg
-# 注释掉ROS依赖，因为通常通过apt安装scipy>=1.8.0
+# catkin-pkg

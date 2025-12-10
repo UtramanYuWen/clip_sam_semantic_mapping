@@ -82,9 +82,11 @@ sudo apt-get install -y \
   ros-noetic-cv-bridge \
   ros-noetic-image-transport \
   ros-noetic-geometry-msgs \
-  ros-noetic-sensor-msgs
+  ros-noetic-sensor-msgs \
+  ros-noetic-gmapping
 
 # 对于ROS Melodic，替换 noetic 为 melodic
+# 完整命令: sudo apt-get install -y ros-melodic-cv-bridge ros-melodic-image-transport ros-melodic-geometry-msgs ros-melodic-sensor-msgs ros-melodic-gmapping
 ```
 
 #### 第2步：安装Python依赖

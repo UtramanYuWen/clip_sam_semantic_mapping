@@ -76,14 +76,17 @@ cd ~/catkin_ws/src
 # 克隆仿真环境包（提供Gazebo环境和家具模型）
 git clone https://github.com/6-robot/wpr_simulation.git
 
-# 安装ROS系统依赖
+# 安装ROS系统依赖（包括gmapping SLAM）
 sudo apt-get update
-sudo apt-get install -y python3-pip python3-dev ros-$ROS_DISTRO-cv-bridge \
-  ros-$ROS_DISTRO-image-transport ros-$ROS_DISTRO-geometry-msgs
+sudo apt-get install -y python3-pip python3-dev \
+  ros-$ROS_DISTRO-cv-bridge \
+  ros-$ROS_DISTRO-image-transport \
+  ros-$ROS_DISTRO-geometry-msgs \
+  ros-$ROS_DISTRO-gmapping
 ```
 
 **第2步: 安装Python依赖**
-```bash
+````
 pip install -r requirements.txt
 # 包括: torch, torchvision, clip, segment-anything, opencv-python, numpy 等
 ```

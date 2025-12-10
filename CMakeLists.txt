@@ -30,8 +30,6 @@ catkin_package(
 ## 安装Python脚本
 catkin_install_python(PROGRAMS
   src/clip_sam_semantic_mapper.py
-  scripts/semantic_map_viewer.py
-  scripts/test_clip_sam.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
