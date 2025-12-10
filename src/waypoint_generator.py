@@ -300,6 +300,20 @@ class WaypointGenerator:
         """
         生成 XML 航点文件（兼容 wp_manager.cpp）
         
+        输出格式：
+        <Waterplus>
+            <Waypoint>
+                <Name>bedroom</Name>
+                <Pos_x>2.665520</Pos_x>
+                <Pos_y>-1.953788</Pos_y>
+                <Pos_z>0</Pos_z>
+                <Ori_x>0</Ori_x>
+                <Ori_y>0</Ori_y>
+                <Ori_z>-0.408771</Ori_z>
+                <Ori_w>0.912637</Ori_w>
+            </Waypoint>
+        </Waterplus>
+        
         Args:
             room_centers: 房间中心点 {room_name: (x, y)}
             detected_rooms: 检测到的房间列表
@@ -312,56 +326,104 @@ class WaypointGenerator:
         
         # 中文房间名称到英文的映射
         room_name_mapping = {
-            "客厅": "Living Room",
-            "卧室": "Bedroom",
-            "书房": "Study",
-            "餐厅": "Dining Room",
-            "厨房": "Kitchen",
-            "卫生间": "Bathroom",
-            "阳台": "Balcony",
-            "玄关": "Entrance",
-            "未知": "Unknown"
+            "客厅": "living room",
+            "卧室": "bedroom",
+            "书房": "study",
+            "餐厅": "dining room",
+            "厨房": "kitchen",
+            "卫生间": "bathroom",
+            "阳台": "balcony",
+            "玄关": "entrance",
+            "未知": "unknown"
         }
         
         # 创建根元素
         root = ET.Element("Waterplus")
+        root.text = "\n    "
+        root.tail = "\n"
         
         # 添加每个房间作为航点
         if room_centers:
-            for room_name, (center_x, center_y) in sorted(room_centers.items()):
+            waypoint_list = sorted(room_centers.items())
+            for idx, (room_name, (center_x, center_y)) in enumerate(waypoint_list):
                 waypoint_elem = ET.SubElement(root, "Waypoint")
+                waypoint_elem.text = "\n        "
+                waypoint_elem.tail = "\n    " if idx < len(waypoint_list) - 1 else "\n"
                 
-                # 房间名称 - 转换为英文
-                english_name = room_name_mapping.get(room_name, room_name)
+                # 房间名称 - 转换为英文（小写）
+                english_name = room_name_mapping.get(room_name, room_name.lower())
                 name_elem = ET.SubElement(waypoint_elem, "Name")
                 name_elem.text = str(english_name)
+                name_elem.tail = "\n        "
                 
                 # 位置信息
                 pos_x_elem = ET.SubElement(waypoint_elem, "Pos_x")
                 pos_x_elem.text = f"{float(center_x):.6f}"
+                pos_x_elem.tail = "\n        "
                 
                 pos_y_elem = ET.SubElement(waypoint_elem, "Pos_y")
                 pos_y_elem.text = f"{float(center_y):.6f}"
+                pos_y_elem.tail = "\n        "
                 
                 pos_z_elem = ET.SubElement(waypoint_elem, "Pos_z")
-                pos_z_elem.text = "0.000000"
+                pos_z_elem.text = "0"
+                pos_z_elem.tail = "\n        "
                 
                 # 朝向信息（四元数，默认朝向前方）
                 ori_x_elem = ET.SubElement(waypoint_elem, "Ori_x")
-                ori_x_elem.text = "0.000000"
+                ori_x_elem.text = "0"
+                ori_x_elem.tail = "\n        "
                 
                 ori_y_elem = ET.SubElement(waypoint_elem, "Ori_y")
-                ori_y_elem.text = "0.000000"
+                ori_y_elem.text = "0"
+                ori_y_elem.tail = "\n        "
                 
                 ori_z_elem = ET.SubElement(waypoint_elem, "Ori_z")
-                ori_z_elem.text = "0.000000"
+                ori_z_elem.text = "0"
+                ori_z_elem.tail = "\n        "
                 
                 ori_w_elem = ET.SubElement(waypoint_elem, "Ori_w")
-                ori_w_elem.text = "1.000000"
+                ori_w_elem.text = "1"
+                ori_w_elem.tail = "\n    "
         
-        # 写入 XML 文件
+        # 写入 XML 文件，使用特定的格式化
         tree = ET.ElementTree(root)
         tree.write(xml_path, encoding='utf-8', xml_declaration=True)
+        
+        # 读取文件并进行格式化调整
+        with open(xml_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # 确保正确的缩进和格式
+        content = content.replace('><', '>\n<')
+        lines = content.split('\n')
+        formatted_lines = []
+        for line in lines:
+            if line.strip():
+                formatted_lines.append(line)
+        
+        # 重新格式化为标准的可读格式
+        formatted_content = '<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n<Waterplus>\n'
+        
+        if room_centers:
+            for room_name, (center_x, center_y) in sorted(room_centers.items()):
+                english_name = room_name_mapping.get(room_name, room_name.lower())
+                formatted_content += f'    <Waypoint>\n'
+                formatted_content += f'        <Name>{english_name}</Name>\n'
+                formatted_content += f'        <Pos_x>{float(center_x):.6f}</Pos_x>\n'
+                formatted_content += f'        <Pos_y>{float(center_y):.6f}</Pos_y>\n'
+                formatted_content += f'        <Pos_z>0</Pos_z>\n'
+                formatted_content += f'        <Ori_x>0</Ori_x>\n'
+                formatted_content += f'        <Ori_y>0</Ori_y>\n'
+                formatted_content += f'        <Ori_z>0</Ori_z>\n'
+                formatted_content += f'        <Ori_w>1</Ori_w>\n'
+                formatted_content += f'    </Waypoint>\n'
+        
+        formatted_content += '</Waterplus>\n'
+        
+        # 写入格式化后的内容
+        with open(xml_path, 'w', encoding='utf-8') as f:
+            f.write(formatted_content)
         
         return xml_filename
     
