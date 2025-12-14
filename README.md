@@ -86,7 +86,7 @@ sudo apt-get install -y python3-pip python3-dev \
 ```
 
 **第2步: 安装Python依赖**
-````
+```bash
 pip install -r requirements.txt
 # 包括: torch, torchvision, clip, segment-anything, opencv-python, numpy 等
 ```
