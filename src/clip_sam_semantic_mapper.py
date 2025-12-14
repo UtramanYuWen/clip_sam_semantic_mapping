@@ -1897,12 +1897,30 @@ class HierarchicalCLIPSAMMapping:
                 ]
             }
             
+            # ✨ 坐标转换：像素坐标 -> 实世界坐标
+            # region_centers存储的是像素坐标，需要转换为ROS导航需要的实世界坐标
+            world_room_centers = {}
+            map_origin_x = map_metadata['origin'][0]
+            map_origin_y = map_metadata['origin'][1]
+            map_resolution = map_metadata['resolution']
+            
+            for room_name, (pixel_x, pixel_y) in self.region_centers.items():
+                # 像素坐标到世界坐标的转换公式：
+                # world_x = origin_x + pixel_x * resolution
+                # world_y = origin_y + pixel_y * resolution
+                world_x = map_origin_x + pixel_x * map_resolution
+                world_y = map_origin_y + pixel_y * map_resolution
+                world_room_centers[room_name] = (world_x, world_y)
+                
+                print(f"    坐标转换: {room_name}")
+                print(f"      像素: ({pixel_x}, {pixel_y}) -> 世界: ({world_x:.4f}, {world_y:.4f})")
+            
             # 3. 创建航点生成器并生成文件
             generator = WaypointGenerator(waypoints_save_dir)
             results = generator.generate_all_files(
                 occupancy_data,
                 map_metadata,
-                self.region_centers,
+                world_room_centers,  # 使用转换后的世界坐标
                 self.semantic_grid,
                 detected_rooms
             )

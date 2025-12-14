@@ -369,7 +369,20 @@ class WaypointGenerator:
                 pos_z_elem.text = "0"
                 pos_z_elem.tail = "\n        "
                 
-                # 朝向信息（四元数，默认朝向前方）
+                # 朝向信息（四元数，生成随机朝向以获得更自然的导航目标）
+                # 四元数表示: (x, y, z, w)，其中w=1是朝向X轴，z和w控制yaw角
+                import math
+                import random
+                
+                # 生成随机的yaw角 (-π 到 π)
+                yaw_angle = random.uniform(-math.pi, math.pi)
+                
+                # 将yaw角转换为四元数
+                # 对于绕Z轴的旋转: q = (0, 0, sin(yaw/2), cos(yaw/2))
+                half_yaw = yaw_angle / 2.0
+                ori_z = math.sin(half_yaw)
+                ori_w = math.cos(half_yaw)
+                
                 ori_x_elem = ET.SubElement(waypoint_elem, "Ori_x")
                 ori_x_elem.text = "0"
                 ori_x_elem.tail = "\n        "
@@ -379,11 +392,11 @@ class WaypointGenerator:
                 ori_y_elem.tail = "\n        "
                 
                 ori_z_elem = ET.SubElement(waypoint_elem, "Ori_z")
-                ori_z_elem.text = "0"
+                ori_z_elem.text = f"{ori_z:.6f}"
                 ori_z_elem.tail = "\n        "
                 
                 ori_w_elem = ET.SubElement(waypoint_elem, "Ori_w")
-                ori_w_elem.text = "1"
+                ori_w_elem.text = f"{ori_w:.6f}"
                 ori_w_elem.tail = "\n    "
         
         # 写入 XML 文件，使用特定的格式化
